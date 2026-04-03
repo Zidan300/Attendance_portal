@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduAttend Pro | Modern Academic Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>EduAttend Pro</span>
+            </div>
+            <div id="current-time" class="current-time"></div>
+            <div id="auth-header" class="hidden">
+                <span id="username-display"></span>
+                <button id="logout-btn" class="btn-outline">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <!-- Login View -->
+            <section id="login-view" class="view">
+                <div class="card login-card">
+                    <div class="login-header">
+                        <i class="fas fa-user-circle"></i>
+                        <h2>Staff Login</h2>
+                        <p>Academic Attendance Portal</p>
+                    </div>
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="username">
+                                <i class="fas fa-user"></i> Username
+                            </label>
+                            <input type="text" id="username" name="username" placeholder="Enter username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">
+                                <i class="fas fa-lock"></i> Password
+                            </label>
+                            <input type="password" id="password" name="password" placeholder="Enter password" required>
+                        </div>
+                        <button type="submit" class="btn-primary full-width">
+                            <i class="fas fa-sign-in-alt"></i> Sign In
+                        </button>
+                        <p id="login-error" class="error hidden"></p>
+                    </form>
+                    <div class="login-footer">
+                        <p>Default credentials: admin / password123</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard View -->
+            <section id="dashboard-view" class="view hidden">
+                <div class="dashboard-grid">
+                    <!-- Sidebar/Actions -->
+                    <aside class="dashboard-sidebar">
+                        <div class="card">
+                            <h3><i class="fas fa-tasks"></i> Quick Actions</h3>
+                            <div class="sidebar-actions">
+                                <button id="add-section-btn" class="btn-secondary full-width">
+                                    <i class="fas fa-plus-circle"></i> New Section
+                                </button>
+                                <button id="add-student-btn" class="btn-secondary full-width">
+                                    <i class="fas fa-user-plus"></i> Add Student
+                                </button>
+                                <button id="view-history-btn" class="btn-secondary full-width">
+                                    <i class="fas fa-history"></i> View History
+                                </button>
+                                <button id="monthly-view-btn" class="btn-secondary full-width">
+                                    <i class="fas fa-calendar-alt"></i> Monthly Report
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card stats-card">
+                            <h3><i class="fas fa-chart-pie"></i> Today's Stats</h3>
+                            <div id="daily-stats">
+                                <div class="stat-item">
+                                    <span class="stat-label">Total Students</span>
+                                    <span class="stat-value" id="stat-total">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label stat-present">Present</span>
+                                    <span class="stat-value" id="stat-present">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label stat-absent">Absent</span>
+                                    <span class="stat-value" id="stat-absent">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label stat-late">Late</span>
+                                    <span class="stat-value" id="stat-late">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label stat-excused">Excused</span>
+                                    <span class="stat-value" id="stat-excused">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <!-- Main Attendance Area -->
+                    <div class="dashboard-main">
+                        <div class="card">
+                            <div class="controls-row">
+                                <div class="control-group">
+                                    <label><i class="fas fa-chalkboard"></i> Section:</label>
+                                    <select id="section-select">
+                                        <option value="">Select Section</option>
+                                    </select>
+                                </div>
+                                <div class="control-group">
+                                    <label><i class="fas fa-calendar"></i> Date:</label>
+                                    <input type="date" id="attendance-date">
+                                </div>
+                                <div class="control-group">
+                                    <label><i class="fas fa-search"></i> Search:</label>
+                                    <input type="text" id="student-search" placeholder="Search students...">
+                                </div>
+                            </div>
+
+                            <div class="bulk-actions">
+                                <button id="mark-all-present" class="btn-success-outline">
+                                    <i class="fas fa-check-double"></i> Mark All Present
+                                </button>
+                                <button id="mark-all-absent" class="btn-danger-outline">
+                                    <i class="fas fa-times-circle"></i> Mark All Absent
+                                </button>
+                            </div>
+
+                            <div class="attendance-grid" id="attendance-grid">
+                                <!-- Student cards will be injected here -->
+                            </div>
+
+                            <div class="dashboard-footer">
+                                <button id="submit-attendance" class="btn-primary">
+                                    <i class="fas fa-save"></i> Save Attendance
+                                </button>
+                                <button id="download-pdf" class="btn-success">
+                                    <i class="fas fa-file-pdf"></i> Export PDF
+                                </button>
+                                <button id="download-txt" class="btn-outline">
+                                    <i class="fas fa-file-alt"></i> Export TXT
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p id="dashboard-msg" class="msg hidden"></p>
+            </section>
+
+            <!-- History View -->
+            <section id="history-view" class="view hidden">
+                <div class="dashboard-header">
+                    <h2><i class="fas fa-history"></i> Attendance History</h2>
+                    <button id="back-to-dashboard" class="btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <div class="controls-row">
+                        <div class="control-group">
+                            <label>Section:</label>
+                            <select id="history-section-select">
+                                <option value="">All Sections</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>Start Date:</label>
+                            <input type="date" id="history-start-date">
+                        </div>
+                        <div class="control-group">
+                            <label>End Date:</label>
+                            <input type="date" id="history-end-date">
+                        </div>
+                        <button id="filter-history" class="btn-primary">
+                            <i class="fas fa-filter"></i> Filter
+                        </button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Day</th>
+                                    <th>Section</th>
+                                    <th>Student</th>
+                                    <th>Status</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-list"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Monthly View -->
+            <section id="monthly-view" class="view hidden">
+                <div class="dashboard-header">
+                    <h2><i class="fas fa-calendar-alt"></i> Monthly Attendance Report</h2>
+                    <button id="back-from-monthly" class="btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <div class="controls-row">
+                        <div class="control-group">
+                            <label>Section:</label>
+                            <select id="monthly-section-select">
+                                <option value="">Select Section</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>Month:</label>
+                            <input type="month" id="monthly-date">
+                        </div>
+                        <button id="load-monthly" class="btn-primary">
+                            <i class="fas fa-sync"></i> Load Report
+                        </button>
+                    </div>
+                    
+                    <div id="monthly-report-container">
+                        <!-- Monthly report will be rendered here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Modals -->
+        <div id="section-modal" class="modal hidden">
+            <div class="modal-content card">
+                <h3><i class="fas fa-plus-circle"></i> Create New Section</h3>
+                <input type="text" id="new-section-name" placeholder="e.g. Grade 10 - C">
+                <div class="modal-footer">
+                    <button id="cancel-section" class="btn-outline">Cancel</button>
+                    <button id="save-section" class="btn-primary">Create</button>
+                </div>
+                <p id="section-error" class="error hidden"></p>
+            </div>
+        </div>
+
+        <div id="student-modal" class="modal hidden">
+            <div class="modal-content card">
+                <h3><i class="fas fa-user-plus"></i> Add New Student</h3>
+                <input type="text" id="new-student-name" placeholder="Full Name">
+                <select id="new-student-section">
+                    <option value="">Select Section</option>
+                </select>
+                <div class="photo-upload">
+                    <label for="student-photo">
+                        <i class="fas fa-camera"></i> Upload Photo (Optional)
+                    </label>
+                    <input type="file" id="student-photo" accept="image/*">
+                </div>
+                <div class="modal-footer">
+                    <button id="cancel-student" class="btn-outline">Cancel</button>
+                    <button id="save-student" class="btn-primary">Add Student</button>
+                </div>
+                <p id="student-error" class="error hidden"></p>
+            </div>
+        </div>
+
+        <div id="notes-modal" class="modal hidden">
+            <div class="modal-content card">
+                <h3><i class="fas fa-sticky-note"></i> Add Note</h3>
+                <p id="notes-student-name" class="text-muted"></p>
+                <textarea id="attendance-notes" rows="4" placeholder="Enter notes for this attendance record..." maxlength="500"></textarea>
+                <div class="modal-footer">
+                    <button id="cancel-notes" class="btn-outline">Cancel</button>
+                    <button id="save-notes" class="btn-primary">Save Note</button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2024 EduAttend Pro - Modern Academic Attendance Portal</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+◇ injecting env (3) from .env // tip: ⌘ suppress logs { quiet: true }
+◇ injecting env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+◇ injecting env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+◇ injecting env (0) from .env // tip: ⌘ enable debugging { debug: true }
+Database synchronized.
+Database ready.
+Server running on port 3000

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Attendance | Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>EduAttend Pro</span>
+            </div>
+            <div id="current-time" class="current-time"></div>
+            <div id="auth-header" class="hidden">
+                <span id="username-display"></span>
+                <button id="logout-btn" class="btn-outline">Logout</button>
+            </div>
+        </header>
+
+        <main>
+            <!-- Login View -->
+            <section id="login-view" class="view">
+                <div class="card login-card">
+                    <h2>Staff Login</h2>
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" placeholder="Enter username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" placeholder="Enter password" required>
+                        </div>
+                        <button type="submit" class="btn-primary full-width">Sign In</button>
+                        <p id="login-error" class="error hidden"></p>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Dashboard View -->
+            <section id="dashboard-view" class="view hidden">
+                <div class="dashboard-grid">
+                    <!-- Sidebar/Actions -->
+                    <aside class="dashboard-sidebar">
+                        <div class="card">
+                            <h3>Management</h3>
+                            <div class="sidebar-actions">
+                                <button id="add-section-btn" class="btn-secondary full-width"><i class="fas fa-plus"></i> New Section</button>
+                                <button id="add-student-btn" class="btn-secondary full-width"><i class="fas fa-user-plus"></i> Add Student</button>
+                                <button id="view-history-btn" class="btn-secondary full-width"><i class="fas fa-history"></i> History</button>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <!-- Main Attendance Area -->
+                    <div class="dashboard-main">
+                        <div class="card">
+                            <div class="controls-row">
+                                <div class="control-group">
+                                    <label>Section:</label>
+                                    <select id="section-select">
+                                        <option value="">Select Section</option>
+                                    </select>
+                                </div>
+                                <div class="control-group">
+                                    <label>Date:</label>
+                                    <input type="date" id="attendance-date">
+                                </div>
+                            </div>
+
+                            <div class="table-container">
+                                <table id="student-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Student Name</th>
+                                            <th>Status</th>
+                                            <th class="text-right">Marking</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="student-list">
+                                        <!-- Rows injected by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="dashboard-footer">
+                                <button id="submit-attendance" class="btn-primary">
+                                    <i class="fas fa-cloud-upload-alt"></i> Save Attendance
+                                </button>
+                                <button id="download-report" class="btn-success">
+                                    <i class="fas fa-file-export"></i> Export .txt
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p id="dashboard-msg" class="msg hidden"></p>
+            </section>
+
+            <!-- History View -->
+            <section id="history-view" class="view hidden">
+                <div class="dashboard-header">
+                    <h2>Attendance Records</h2>
+                    <button id="back-to-dashboard" class="btn-secondary"><i class="fas fa-arrow-left"></i> Back</button>
+                </div>
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Section</th>
+                                    <th>Student</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-list"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Modals -->
+        <div id="section-modal" class="modal hidden">
+            <div class="modal-content card">
+                <h3>Create New Section</h3>
+                <input type="text" id="new-section-name" placeholder="e.g. Grade 10 - C">
+                <div class="modal-footer">
+                    <button id="cancel-section" class="btn-outline">Cancel</button>
+                    <button id="save-section" class="btn-primary">Create</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="student-modal" class="modal hidden">
+            <div class="modal-content card">
+                <h3>Add New Student</h3>
+                <input type="text" id="new-student-name" placeholder="Full Name">
+                <select id="new-student-section"></select>
+                <div class="modal-footer">
+                    <button id="cancel-student" class="btn-outline">Cancel</button>
+                    <button id="save-student" class="btn-primary">Add Student</button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2024 EduAttend Pro - Professional School Management</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

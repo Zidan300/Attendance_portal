@@ -22,7 +22,7 @@ const Student = sequelize.define('Student', {
 });
 
 const Attendance = sequelize.define('Attendance', {
-  date: { type: DataTypes.STRING, allowNull: false }, // Format: YYYY-MM-DD
+  date: { type: DataTypes.DATEONLY, allowNull: false },
   status: { 
     type: DataTypes.ENUM('Present', 'Absent', 'Late Present'), 
     allowNull: false 

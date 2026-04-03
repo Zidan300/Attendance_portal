@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Attendance Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Login View -->
+        <div id="login-view" class="view">
+            <div class="login-container">
+                <h1>School Attendance Portal</h1>
+                <form id="login-form">
+                    <input type="text" id="username" placeholder="Username" required>
+                    <input type="password" id="password" placeholder="Password" required>
+                    <button type="submit" class="btn-primary">Login</button>
+                    <p id="login-error" class="error hidden"></p>
+                </form>
+                <p class="help-text">Default: teacher1 / password123</p>
+            </div>
+        </div>
+
+        <!-- Dashboard View -->
+        <div id="dashboard-view" class="view hidden">
+            <header>
+                <h1>📋 School Attendance</h1>
+                <div class="header-right">
+                    <span id="user-name"></span>
+                    <button id="logout-btn" class="btn-secondary">Logout</button>
+                </div>
+            </header>
+
+            <main>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Date:</label>
+                        <input type="date" id="attendance-date">
+                    </div>
+                    <div class="stats">
+                        <span>Total: <strong id="stat-total">0</strong></span>
+                        <span class="stat-present">Present: <strong id="stat-present">0</strong></span>
+                        <span class="stat-absent">Absent: <strong id="stat-absent">0</strong></span>
+                        <span class="stat-late">Late: <strong id="stat-late">0</strong></span>
+                        <span>Attendance: <strong id="stat-percentage">0%</strong></span>
+                    </div>
+                </div>
+
+                <div class="add-student-section">
+                    <input type="text" id="new-student-name" placeholder="Type student name and press Enter to add...">
+                </div>
+
+                <div class="attendance-table-container">
+                    <table id="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Student Name</th>
+                                <th class="action-col">Mark Attendance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-tbody">
+                            <!-- Students will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="actions">
+                    <button id="submit-attendance" class="btn-primary">Submit Attendance</button>
+                    <button id="download-txt" class="btn-download">Download TXT</button>
+                    <button id="download-pdf" class="btn-download">Download PDF</button>
+                </div>
+
+                <div id="message" class="message hidden"></div>
+            </main>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

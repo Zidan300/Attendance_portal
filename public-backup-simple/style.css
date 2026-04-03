@@ -1,0 +1,371 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background-color: #fff;
+    color: #333;
+    line-height: 1.6;
+}
+
+.view {
+    display: none;
+}
+
+.view:not(.hidden) {
+    display: block;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Login View */
+.login-container {
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 40px;
+    text-align: center;
+    background: white;
+    border: 2px solid #ff6600;
+    border-radius: 8px;
+}
+
+.login-container h1 {
+    color: #ff6600;
+    margin-bottom: 30px;
+}
+
+.login-container input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.login-container input:focus {
+    outline: none;
+    border-color: #ff6600;
+}
+
+.help-text {
+    margin-top: 15px;
+    font-size: 12px;
+    color: #666;
+}
+
+/* Dashboard Header */
+header {
+    background-color: #ff6600;
+    color: white;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-right span {
+    font-weight: 500;
+}
+
+/* Main Content */
+main {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+/* Controls */
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.control-group label {
+    font-weight: 600;
+    color: #333;
+}
+
+.control-group input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.stats {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+}
+
+.stats span {
+    color: #666;
+}
+
+.stat-present {
+    color: #28a745;
+}
+
+.stat-absent {
+    color: #dc3545;
+}
+
+.stat-late {
+    color: #ffc107;
+}
+
+/* Add Student */
+.add-student-section {
+    margin-bottom: 20px;
+}
+
+.add-student-section input {
+    width: 100%;
+    padding: 12px;
+    border: 2px dashed #ff6600;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.add-student-section input:focus {
+    outline: none;
+    border-style: solid;
+}
+
+/* Attendance Table */
+.attendance-table-container {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin-bottom: 30px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background-color: #f8f9fa;
+}
+
+th {
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #ddd;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.action-col {
+    width: 400px;
+}
+
+/* Attendance Buttons */
+.attendance-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-attendance {
+    padding: 8px 20px;
+    border: 2px solid #ddd;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-attendance:hover {
+    transform: translateY(-1px);
+}
+
+.btn-attendance.active {
+    border-color: transparent;
+    color: white;
+}
+
+.btn-attendance.present {
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.btn-attendance.present.active {
+    background-color: #28a745;
+}
+
+.btn-attendance.absent {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.btn-attendance.absent.active {
+    background-color: #dc3545;
+}
+
+.btn-attendance.late {
+    border-color: #ffc107;
+    color: #856404;
+}
+
+.btn-attendance.late.active {
+    background-color: #ffc107;
+}
+
+/* Action Buttons */
+.actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn-primary {
+    padding: 12px 30px;
+    background-color: #ff6600;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #e55a00;
+}
+
+.btn-secondary {
+    padding: 8px 20px;
+    background-color: white;
+    color: #ff6600;
+    border: 2px solid #ff6600;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: #ff6600;
+    color: white;
+}
+
+.btn-download {
+    padding: 12px 30px;
+    background-color: white;
+    color: #333;
+    border: 2px solid #ff6600;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-download:hover {
+    background-color: #ff6600;
+    color: white;
+}
+
+/* Messages */
+.message {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    padding: 15px 25px;
+    background-color: #333;
+    color: white;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.error {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+}
+
+.empty-state p {
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .stats {
+        flex-wrap: wrap;
+    }
+
+    .attendance-buttons {
+        flex-direction: column;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .btn-primary, .btn-download {
+        width: 100%;
+    }
+}

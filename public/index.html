@@ -3,159 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Attendance | Management</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>School Attendance Portal</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div id="app">
-        <header>
-            <div class="logo">
-                <i class="fas fa-graduation-cap"></i>
-                <span>EduAttend Pro</span>
+        <!-- Login Page -->
+        <div id="loginPage" class="page active">
+            <div class="login-container">
+                <div class="login-header">
+                    <h1>🎓 School Attendance Portal</h1>
+                    <p>Teacher Login</p>
+                </div>
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <input type="text" id="username" placeholder="Username" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="password" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Login</button>
+                    <div id="loginError" class="error-msg"></div>
+                </form>
             </div>
-            <div id="current-time" class="current-time"></div>
-            <div id="auth-header" class="hidden">
-                <span id="username-display"></span>
-                <button id="logout-btn" class="btn-outline">Logout</button>
-            </div>
-        </header>
+        </div>
 
-        <main>
-            <!-- Login View -->
-            <section id="login-view" class="view">
-                <div class="card login-card">
-                    <h2>Staff Login</h2>
-                    <form id="login-form">
-                        <div class="form-group">
-                            <label for="username">Username</label>
-                            <input type="text" id="username" name="username" placeholder="Enter username" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" id="password" name="password" placeholder="Enter password" required>
-                        </div>
-                        <button type="submit" class="btn-primary full-width">Sign In</button>
-                        <p id="login-error" class="error hidden"></p>
+        <!-- Section Selection Page -->
+        <div id="sectionPage" class="page">
+            <div class="header">
+                <h1>📚 Select or Create Section</h1>
+                <button id="logoutBtn" class="btn-logout">Logout</button>
+            </div>
+            
+            <div class="section-container">
+                <div class="create-section-card">
+                    <h3>➕ Create New Section</h3>
+                    <form id="createSectionForm">
+                        <input type="text" id="newSectionName" placeholder="Enter section name (e.g., Grade 10A)" required>
+                        <button type="submit" class="btn-primary">Create Section</button>
                     </form>
                 </div>
-            </section>
 
-            <!-- Dashboard View -->
-            <section id="dashboard-view" class="view hidden">
-                <div class="dashboard-grid">
-                    <!-- Sidebar/Actions -->
-                    <aside class="dashboard-sidebar">
-                        <div class="card">
-                            <h3>Management</h3>
-                            <div class="sidebar-actions">
-                                <button id="add-section-btn" class="btn-secondary full-width"><i class="fas fa-plus"></i> New Section</button>
-                                <button id="add-student-btn" class="btn-secondary full-width"><i class="fas fa-user-plus"></i> Add Student</button>
-                                <button id="view-history-btn" class="btn-secondary full-width"><i class="fas fa-history"></i> History</button>
-                            </div>
-                        </div>
-                    </aside>
-
-                    <!-- Main Attendance Area -->
-                    <div class="dashboard-main">
-                        <div class="card">
-                            <div class="controls-row">
-                                <div class="control-group">
-                                    <label>Section:</label>
-                                    <select id="section-select">
-                                        <option value="">Select Section</option>
-                                    </select>
-                                </div>
-                                <div class="control-group">
-                                    <label>Date:</label>
-                                    <input type="date" id="attendance-date">
-                                </div>
-                            </div>
-
-                            <div class="table-container">
-                                <table id="student-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Student Name</th>
-                                            <th>Status</th>
-                                            <th class="text-right">Marking</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="student-list">
-                                        <!-- Rows injected by JS -->
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <div class="dashboard-footer">
-                                <button id="submit-attendance" class="btn-primary">
-                                    <i class="fas fa-cloud-upload-alt"></i> Save Attendance
-                                </button>
-                                <button id="download-report" class="btn-success">
-                                    <i class="fas fa-file-export"></i> Export .txt
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <p id="dashboard-msg" class="msg hidden"></p>
-            </section>
-
-            <!-- History View -->
-            <section id="history-view" class="view hidden">
-                <div class="dashboard-header">
-                    <h2>Attendance Records</h2>
-                    <button id="back-to-dashboard" class="btn-secondary"><i class="fas fa-arrow-left"></i> Back</button>
-                </div>
-                <div class="card">
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Section</th>
-                                    <th>Student</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="history-list"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <!-- Modals -->
-        <div id="section-modal" class="modal hidden">
-            <div class="modal-content card">
-                <h3>Create New Section</h3>
-                <input type="text" id="new-section-name" placeholder="e.g. Grade 10 - C">
-                <div class="modal-footer">
-                    <button id="cancel-section" class="btn-outline">Cancel</button>
-                    <button id="save-section" class="btn-primary">Create</button>
+                <div class="sections-grid" id="sectionsGrid">
+                    <!-- Sections will be loaded here -->
                 </div>
             </div>
         </div>
 
-        <div id="student-modal" class="modal hidden">
-            <div class="modal-content card">
-                <h3>Add New Student</h3>
-                <input type="text" id="new-student-name" placeholder="Full Name">
-                <select id="new-student-section"></select>
-                <div class="modal-footer">
-                    <button id="cancel-student" class="btn-outline">Cancel</button>
-                    <button id="save-student" class="btn-primary">Add Student</button>
+        <!-- Attendance Page -->
+        <div id="attendancePage" class="page">
+            <div class="header">
+                <div class="header-left">
+                    <button id="backToSections" class="btn-back">← Back to Sections</button>
+                    <h2 id="currentSectionName">Section Name</h2>
+                </div>
+                <div class="header-right">
+                    <button id="toggleEditorBtn" class="btn-settings">📝 Edit Students</button>
+                    <button id="settingsBtn" class="btn-settings">⚙️ Section Settings</button>
+                </div>
+            </div>
+
+            <div class="attendance-container">
+                <div id="editorMode" class="editor-mode-container" style="display: none;">
+                    <h3>📝 Student Entry Mode</h3>
+                    <p>Enter student names below. Click "Done" to finalize and start marking attendance.</p>
+                    <div id="editorInputList" class="editor-input-list">
+                        <!-- Input boxes will be added here -->
+                    </div>
+                    <button id="addInputRowBtn" class="btn-download">+ Add Another Student</button>
+                    <button id="saveStudentsBtn" class="btn-submit">Done (Save & Sort)</button>
+                </div>
+
+                <div id="attendanceMode">
+                    <div class="date-selector">
+                    <label>Date:</label>
+                    <input type="date" id="attendanceDate">
+                </div>
+
+                <div class="stats-bar">
+                    <div class="stat">Total: <span id="totalStudents">0</span></div>
+                    <div class="stat stat-present">Present: <span id="presentCount">0</span></div>
+                    <div class="stat stat-absent">Absent: <span id="absentCount">0</span></div>
+                    <div class="stat stat-late">Late: <span id="lateCount">0</span></div>
+                    <div class="stat">Attendance: <span id="attendancePercentage">0%</span></div>
+                </div>
+
+                <div id="studentList" class="student-list">
+                    <!-- Students will be loaded here -->
+                </div>
+
+                <div class="action-buttons">
+                    <button id="submitAttendance" class="btn-submit">Submit Attendance</button>
+                    <button id="downloadTxt" class="btn-download">Download TXT</button>
+                    <button id="downloadPdf" class="btn-download">Download PDF</button>
                 </div>
             </div>
         </div>
 
-        <footer>
-            <p>&copy; 2024 EduAttend Pro - Professional School Management</p>
-        </footer>
+        <!-- Editor/Settings Modal -->
+        <div id="editorModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>⚙️ Section Settings</h2>
+                    <span class="close-modal">&times;</span>
+                </div>
+                
+                <div class="editor-section">
+                    <h3>Section Management</h3>
+                    <p>Rename or delete this section.</p>
+                </div>
+
+                <div class="editor-section">
+                    <h3>Rename Section</h3>
+                    <form id="renameSectionForm">
+                        <input type="text" id="renameSectionInput" placeholder="New section name" required>
+                        <button type="submit" class="btn-primary">Rename</button>
+                    </form>
+                </div>
+
+                <div class="editor-section danger-zone">
+                    <h3>⚠️ Danger Zone</h3>
+                    <button id="deleteSectionBtn" class="btn-danger">Delete This Section</button>
+                </div>
+            </div>
+        </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
