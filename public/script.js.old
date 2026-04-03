@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let students = [];
     let attendanceRecords = {}; // studentId -> status
     let sections = [];
-    let attendanceSubmitted = false; // Track if attendance is submitted for current date
 
     // Pages
     const pages = {
@@ -14,9 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
         section: document.getElementById('sectionPage'),
         attendance: document.getElementById('attendancePage')
     };
-
-    // Toast Notification
-    const toast = document.getElementById('toast');
 
     // Elements - Login
     const loginForm = document.getElementById('loginForm');
@@ -58,25 +54,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeModal = document.querySelector('.close-modal');
     const renameSectionForm = document.getElementById('renameSectionForm');
     const renameSectionInput = document.getElementById('renameSectionInput');
+    const addStudentForm = document.getElementById('addStudentForm');
+    const newStudentNameInput = document.getElementById('newStudentName');
+    const studentListEditor = document.getElementById('studentListEditor');
     const deleteSectionBtn = document.getElementById('deleteSectionBtn');
 
     // Initialize Date
     attendanceDateInput.value = new Date().toISOString().split('T')[0];
-
-    // --- Toast Notification ---
-    const showToast = (message, type = 'success') => {
-        toast.textContent = message;
-        toast.className = 'toast show';
-        if (type === 'error') toast.classList.add('error');
-        if (type === 'warning') toast.classList.add('warning');
-        
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => {
-                toast.className = 'toast';
-            }, 300);
-        }, 3000);
-    };
 
     // --- Helper Functions ---
 
@@ -102,7 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             showPage('login');
-            showToast('Session expired. Please login again.', 'error');
             return;
         }
 
@@ -155,18 +138,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
-            showToast('Login successful!');
             loadSections();
         } catch (error) {
             loginError.textContent = error.message;
-            showToast(error.message, 'error');
         }
     });
 
     logoutBtn.addEventListener('click', () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        showToast('Logged out successfully');
         showPage('login');
     });
 
@@ -197,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const exitEditorMode = () => {
         editorMode.style.display = 'none';
         attendanceMode.style.display = 'block';
-        toggleEditorBtn.textContent = 'Edit Students';
+        toggleEditorBtn.textContent = '📝 Edit Students';
     };
 
     const addEditorRow = (name = '') => {
@@ -205,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         row.className = 'editor-input-row';
         row.innerHTML = `
             <input type="text" class="student-name-input" placeholder="Enter student name" value="${name}">
-            <button class="btn-remove-row" type="button">&times;</button>
+            <button class="btn-remove-row">&times;</button>
         `;
         row.querySelector('.btn-remove-row').addEventListener('click', () => row.remove());
         editorInputList.appendChild(row);
@@ -218,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const names = inputs.map(i => i.value.trim()).filter(n => n !== '');
 
         if (names.length === 0) {
-            showToast('Please enter at least one student name.', 'warning');
+            alert('Please enter at least one student name.');
             return;
         }
 
@@ -243,11 +223,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            showToast('Student list updated and saved!');
+            alert('Student list updated and saved!');
             exitEditorMode();
             loadAttendanceData();
         } catch (error) {
-            showToast('Error saving student list: ' + error.message, 'error');
+            alert('Error saving student list: ' + error.message);
         }
     });
 
@@ -260,7 +240,6 @@ document.addEventListener('DOMContentLoaded', () => {
             showPage('section');
         } catch (error) {
             console.error('Error loading sections:', error);
-            showToast('Error loading sections', 'error');
         }
     };
 
@@ -291,10 +270,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ name })
             });
             newSectionNameInput.value = '';
-            showToast('Section created successfully!');
             loadSections();
         } catch (error) {
-            showToast(error.message, 'error');
+            alert(error.message);
         }
     });
 
@@ -309,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await loadAttendanceData();
             showPage('attendance');
         } catch (error) {
-            showToast('Error selecting section: ' + error.message, 'error');
+            alert('Error selecting section: ' + error.message);
         }
     };
 
@@ -325,8 +303,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const records = await apiCall(`/attendance/date?date=${date}&sectionId=${currentSection.id}`);
             
             attendanceRecords = {};
-            attendanceSubmitted = records.length > 0;
-            
             records.forEach(rec => {
                 attendanceRecords[rec.StudentId] = rec.status;
             });
@@ -335,13 +311,12 @@ document.addEventListener('DOMContentLoaded', () => {
             updateStats();
         } catch (error) {
             console.error('Error loading attendance data:', error);
-            showToast('Error loading attendance data', 'error');
         }
     };
 
     const renderStudents = () => {
         if (students.length === 0) {
-            studentList.innerHTML = '<div class="empty-state">No students found. Use "Edit Students" to add students.</div>';
+            studentList.innerHTML = '<div class="empty-state">No students found. Use settings to add students.</div>';
             return;
         }
 
@@ -352,15 +327,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="student-row">
                     <div class="student-info">
                         <div class="student-name">${student.name}</div>
-                        <div class="student-history">Overall: ${histPerc}%</div>
+                        <div class="student-history">Total: ${histPerc}%</div>
                     </div>
                     <div class="attendance-buttons">
                         <button class="btn-status ${status === 'Present' ? 'active-present' : ''}" 
-                                data-id="${student.id}" data-status="Present">✓ Present</button>
+                                data-id="${student.id}" data-status="Present">Present</button>
                         <button class="btn-status ${status === 'Absent' ? 'active-absent' : ''}" 
-                                data-id="${student.id}" data-status="Absent">✗ Absent</button>
+                                data-id="${student.id}" data-status="Absent">Absent</button>
                         <button class="btn-status ${status === 'Late Present' ? 'active-late' : ''}" 
-                                data-id="${student.id}" data-status="Late Present">⏰ Late</button>
+                                data-id="${student.id}" data-status="Late Present">Late</button>
                     </div>
                 </div>
             `;
@@ -379,18 +354,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     attendanceRecords[id] = status;
                 }
 
-                // Mark as not submitted since changes were made
-                attendanceSubmitted = false;
-                
                 renderStudents(); // Re-render to update classes
                 updateStats();
             });
         });
     };
 
-    attendanceDateInput.addEventListener('change', () => {
-        loadAttendanceData();
-    });
+    attendanceDateInput.addEventListener('change', loadAttendanceData);
 
     submitAttendanceBtn.addEventListener('click', async () => {
         const date = attendanceDateInput.value;
@@ -400,7 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
 
         if (records.length === 0) {
-            showToast('Please mark at least one student.', 'warning');
+            alert('Please mark at least one student.');
             return;
         }
 
@@ -413,10 +383,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     records 
                 })
             });
-            attendanceSubmitted = true;
-            showToast('Attendance submitted successfully!');
+            alert('Attendance saved successfully!');
         } catch (error) {
-            showToast('Error saving attendance: ' + error.message, 'error');
+            alert('Error saving attendance: ' + error.message);
         }
     });
 
@@ -427,12 +396,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Export ---
 
     const downloadFile = async (format) => {
-        // Check if attendance is submitted
-        if (!attendanceSubmitted) {
-            showToast('Please submit attendance first!', 'warning');
-            return;
-        }
-
         const date = attendanceDateInput.value;
         try {
             const token = localStorage.getItem('token');
@@ -454,10 +417,8 @@ document.addEventListener('DOMContentLoaded', () => {
             a.click();
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
-            
-            showToast(`File downloaded successfully!`);
         } catch (error) {
-            showToast(error.message, 'error');
+            alert(error.message);
         }
     };
 
@@ -495,10 +456,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             currentSection.name = updated.name;
             currentSectionName.textContent = updated.name;
-            showToast('Section renamed successfully!');
-            editorModal.classList.remove('active');
+            alert('Section renamed successfully');
         } catch (error) {
-            showToast(error.message, 'error');
+            alert(error.message);
         }
     });
 
@@ -507,10 +467,9 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 await apiCall(`/sections/${currentSection.id}`, { method: 'DELETE' });
                 editorModal.classList.remove('active');
-                showToast('Section deleted successfully!');
                 loadSections();
             } catch (error) {
-                showToast(error.message, 'error');
+                alert(error.message);
             }
         }
     });

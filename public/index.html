@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
     <div id="app">
         <!-- Login Page -->
         <div id="loginPage" class="page active">
@@ -25,6 +28,7 @@
                     <button type="submit" class="btn-primary">Login</button>
                     <div id="loginError" class="error-msg"></div>
                 </form>
+                <div class="watermark">Made by Zidan</div>
             </div>
         </div>
 
@@ -40,7 +44,7 @@
                     <h3>➕ Create New Section</h3>
                     <form id="createSectionForm">
                         <input type="text" id="newSectionName" placeholder="Enter section name (e.g., Grade 10A)" required>
-                        <button type="submit" class="btn-primary">Create Section</button>
+                        <button type="submit" class="btn-create">Create Section</button>
                     </form>
                 </div>
 
@@ -48,6 +52,7 @@
                     <!-- Sections will be loaded here -->
                 </div>
             </div>
+            <div class="watermark">Made by Zidan</div>
         </div>
 
         <!-- Attendance Page -->
@@ -58,7 +63,7 @@
                     <h2 id="currentSectionName">Section Name</h2>
                 </div>
                 <div class="header-right">
-                    <button id="toggleEditorBtn" class="btn-settings">📝 Edit Students</button>
+                    <button id="toggleEditorBtn" class="btn-edit">Edit Students</button>
                     <button id="settingsBtn" class="btn-settings">⚙️ Section Settings</button>
                 </div>
             </div>
@@ -70,34 +75,36 @@
                     <div id="editorInputList" class="editor-input-list">
                         <!-- Input boxes will be added here -->
                     </div>
-                    <button id="addInputRowBtn" class="btn-download">+ Add Another Student</button>
-                    <button id="saveStudentsBtn" class="btn-submit">Done (Save & Sort)</button>
+                    <button id="addInputRowBtn" class="btn-add">+ Add Another Student</button>
+                    <button id="saveStudentsBtn" class="btn-done">Done (Save & Sort)</button>
                 </div>
 
                 <div id="attendanceMode">
                     <div class="date-selector">
-                    <label>Date:</label>
-                    <input type="date" id="attendanceDate">
-                </div>
+                        <label>📅 Date:</label>
+                        <input type="date" id="attendanceDate">
+                    </div>
 
-                <div class="stats-bar">
-                    <div class="stat">Total: <span id="totalStudents">0</span></div>
-                    <div class="stat stat-present">Present: <span id="presentCount">0</span></div>
-                    <div class="stat stat-absent">Absent: <span id="absentCount">0</span></div>
-                    <div class="stat stat-late">Late: <span id="lateCount">0</span></div>
-                    <div class="stat">Attendance: <span id="attendancePercentage">0%</span></div>
-                </div>
+                    <div class="stats-bar">
+                        <div class="stat">Total: <span id="totalStudents">0</span></div>
+                        <div class="stat stat-present">Present: <span id="presentCount">0</span></div>
+                        <div class="stat stat-absent">Absent: <span id="absentCount">0</span></div>
+                        <div class="stat stat-late">Late: <span id="lateCount">0</span></div>
+                        <div class="stat">Attendance: <span id="attendancePercentage">0%</span></div>
+                    </div>
 
-                <div id="studentList" class="student-list">
-                    <!-- Students will be loaded here -->
-                </div>
+                    <div id="studentList" class="student-list">
+                        <!-- Students will be loaded here -->
+                    </div>
 
-                <div class="action-buttons">
-                    <button id="submitAttendance" class="btn-submit">Submit Attendance</button>
-                    <button id="downloadTxt" class="btn-download">Download TXT</button>
-                    <button id="downloadPdf" class="btn-download">Download PDF</button>
+                    <div class="action-buttons">
+                        <button id="submitAttendance" class="btn-submit">✓ Submit Attendance</button>
+                        <button id="downloadTxt" class="btn-txt">📄 Download TXT</button>
+                        <button id="downloadPdf" class="btn-pdf">📑 Download PDF</button>
+                    </div>
                 </div>
             </div>
+            <div class="watermark">Made by Zidan</div>
         </div>
 
         <!-- Editor/Settings Modal -->

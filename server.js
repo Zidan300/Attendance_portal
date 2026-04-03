@@ -28,11 +28,13 @@ const initializeDB = async () => {
     console.log('Database synchronized.');
 
     // Seed default user if not exists
-    const existingUser = await User.findOne({ where: { username: 'teacher1' } });
+    const existingUser = await User.findOne({ where: { username: 'zidan' } });
     if (!existingUser) {
-      const hashedPassword = await bcrypt.hash('password123', 10);
-      await User.create({ username: 'teacher1', password: hashedPassword });
-      console.log('Default user created: teacher1/password123');
+      const hashedPassword = await bcrypt.hash('zidan123', 10);
+      await User.create({ username: 'zidan', password: hashedPassword });
+      console.log('Default user created: zidan/zidan123');
+    } else {
+      console.log('Default user already exists: zidan/zidan123');
     }
 
     // Seed default section if none exist
