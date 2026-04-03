@@ -63,6 +63,7 @@
                     <h2 id="currentSectionName">Section Name</h2>
                 </div>
                 <div class="header-right">
+                    <button id="historyBtn" class="btn-history">📜 History</button>
                     <button id="toggleEditorBtn" class="btn-edit">Edit Students</button>
                     <button id="settingsBtn" class="btn-settings">⚙️ Section Settings</button>
                 </div>
@@ -131,6 +132,20 @@
                 <div class="editor-section danger-zone">
                     <h3>⚠️ Danger Zone</h3>
                     <button id="deleteSectionBtn" class="btn-danger">Delete This Section</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance History Modal -->
+        <div id="historyModal" class="modal">
+            <div class="modal-content modal-large">
+                <div class="modal-header">
+                    <h2>📜 Attendance History</h2>
+                    <span class="close-history-modal">&times;</span>
+                </div>
+                
+                <div id="historyContent" class="history-content">
+                    <div class="loading">Loading history...</div>
                 </div>
             </div>
         </div>

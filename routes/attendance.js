@@ -3,8 +3,9 @@ const router = express.Router();
 const { Student, Attendance, Section } = require('../models/index');
 const authenticate = require('../middleware/auth');
 const PDFDocument = require('pdfkit');
+const { Op } = require('sequelize');
 
-// Mark attendance
+// Mark attendance with duplicate prevention
 router.post('/', authenticate, async (req, res) => {
   const { date, records, sectionId } = req.body;
 
@@ -13,6 +14,14 @@ router.post('/', authenticate, async (req, res) => {
   }
 
   try {
+    // Check for existing complete submission for this section and date
+    const existingCount = await Attendance.count({
+      where: { date, SectionId: sectionId }
+    });
+
+    // If records exist and matches student count, it's a resubmission (update)
+    // This allows updates while preventing true duplicates
+    
     for (const rec of records) {
       const existing = await Attendance.findOne({ 
         where: { date, StudentId: rec.studentId } 
@@ -21,6 +30,7 @@ router.post('/', authenticate, async (req, res) => {
       if (existing) {
         existing.status = rec.status;
         existing.UserId = req.user.id;
+        existing.SectionId = sectionId;
         await existing.save();
       } else {
         await Attendance.create({
@@ -33,7 +43,10 @@ router.post('/', authenticate, async (req, res) => {
       }
     }
     
-    res.json({ message: 'Attendance saved successfully', count: records.length });
+    res.json({ 
+      message: existingCount > 0 ? 'Attendance updated successfully' : 'Attendance saved successfully', 
+      count: records.length 
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -199,6 +212,110 @@ router.get('/download/pdf', authenticate, async (req, res) => {
     doc.end();
   } catch (err) {
     console.error('PDF generation error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get attendance history for a section
+router.get('/history', authenticate, async (req, res) => {
+  try {
+    const { sectionId } = req.query;
+    
+    if (!sectionId) {
+      return res.status(400).json({ message: 'Section ID is required' });
+    }
+
+    // Get all unique dates for this section
+    const attendanceRecords = await Attendance.findAll({
+      where: { SectionId: sectionId },
+      include: [
+        { 
+          model: Student, 
+          attributes: ['id', 'name'] 
+        }
+      ],
+      order: [['date', 'DESC'], ['createdAt', 'DESC']]
+    });
+
+    // Group by date
+    const historyByDate = {};
+    attendanceRecords.forEach(record => {
+      const date = record.date;
+      if (!historyByDate[date]) {
+        historyByDate[date] = {
+          date: date,
+          records: [],
+          summary: { present: 0, absent: 0, late: 0, total: 0 }
+        };
+      }
+      
+      historyByDate[date].records.push({
+        id: record.id,
+        studentId: record.StudentId,
+        studentName: record.Student.name,
+        status: record.status,
+        createdAt: record.createdAt
+      });
+
+      // Update summary
+      historyByDate[date].summary.total++;
+      if (record.status === 'Present') historyByDate[date].summary.present++;
+      else if (record.status === 'Absent') historyByDate[date].summary.absent++;
+      else if (record.status === 'Late Present') historyByDate[date].summary.late++;
+    });
+
+    // Convert to array and calculate percentages
+    const history = Object.values(historyByDate).map(day => ({
+      ...day,
+      summary: {
+        ...day.summary,
+        percentage: day.summary.total > 0 
+          ? ((day.summary.present + day.summary.late) / day.summary.total * 100).toFixed(1)
+          : 0
+      }
+    }));
+
+    res.json(history);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete attendance record
+router.delete('/:id', authenticate, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const record = await Attendance.findByPk(id);
+    
+    if (!record) {
+      return res.status(404).json({ message: 'Attendance record not found' });
+    }
+
+    await record.destroy();
+    res.json({ message: 'Attendance record deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete all attendance for a specific date and section
+router.delete('/date/:date/:sectionId', authenticate, async (req, res) => {
+  try {
+    const { date, sectionId } = req.params;
+    
+    const count = await Attendance.destroy({
+      where: { 
+        date: date,
+        SectionId: sectionId
+      }
+    });
+
+    res.json({ 
+      message: `Deleted ${count} attendance record(s)`,
+      count: count
+    });
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });

@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadPdfBtn = document.getElementById('downloadPdf');
     const settingsBtn = document.getElementById('settingsBtn');
     const toggleEditorBtn = document.getElementById('toggleEditorBtn');
+    const historyBtn = document.getElementById('historyBtn');
 
     // Editor Mode Elements
     const editorMode = document.getElementById('editorMode');
@@ -59,6 +60,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const renameSectionForm = document.getElementById('renameSectionForm');
     const renameSectionInput = document.getElementById('renameSectionInput');
     const deleteSectionBtn = document.getElementById('deleteSectionBtn');
+
+    // Elements - History Modal
+    const historyModal = document.getElementById('historyModal');
+    const closeHistoryModal = document.querySelector('.close-history-modal');
+    const historyContent = document.getElementById('historyContent');
 
     // Initialize Date
     attendanceDateInput.value = new Date().toISOString().split('T')[0];
@@ -514,6 +520,108 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    // --- History Modal ---
+
+    historyBtn.addEventListener('click', () => {
+        loadHistory();
+        historyModal.classList.add('active');
+    });
+
+    closeHistoryModal.addEventListener('click', () => {
+        historyModal.classList.remove('active');
+    });
+
+    window.addEventListener('click', (e) => {
+        if (e.target === historyModal) {
+            historyModal.classList.remove('active');
+        }
+    });
+
+    const loadHistory = async () => {
+        try {
+            historyContent.innerHTML = '<div class="loading">Loading history...</div>';
+            
+            const history = await apiCall(`/attendance/history?sectionId=${currentSection.id}`);
+            
+            if (history.length === 0) {
+                historyContent.innerHTML = '<div class="empty-history">No attendance history found for this section.</div>';
+                return;
+            }
+
+            renderHistory(history);
+        } catch (error) {
+            historyContent.innerHTML = `<div class="empty-history">Error loading history: ${error.message}</div>`;
+            showToast('Error loading history', 'error');
+        }
+    };
+
+    const renderHistory = (history) => {
+        historyContent.innerHTML = history.map(day => {
+            const dateObj = new Date(day.date + 'T00:00:00');
+            const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+            const formattedDate = dateObj.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+
+            return `
+                <div class="history-day">
+                    <div class="history-day-header">
+                        <div>
+                            <div class="history-date">${formattedDate} (${dayName})</div>
+                            <div class="history-summary">
+                                <span class="summary-present">Present: ${day.summary.present}</span>
+                                <span class="summary-absent">Absent: ${day.summary.absent}</span>
+                                <span class="summary-late">Late: ${day.summary.late}</span>
+                                <span class="summary-percentage">Attendance: ${day.summary.percentage}%</span>
+                            </div>
+                        </div>
+                        <button class="btn-delete-day" data-date="${day.date}">🗑️ Delete Day</button>
+                    </div>
+                    <div class="history-records">
+                        ${day.records.map(record => `
+                            <div class="history-record">
+                                <span class="history-student-name">${record.studentName}</span>
+                                <span class="history-status ${record.status.toLowerCase().replace(' ', '-')}">${record.status}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Add event listeners for delete buttons
+        document.querySelectorAll('.btn-delete-day').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const date = btn.dataset.date;
+                if (confirm(`Are you sure you want to delete all attendance records for ${date}?`)) {
+                    await deleteAttendanceDay(date);
+                }
+            });
+        });
+    };
+
+    const deleteAttendanceDay = async (date) => {
+        try {
+            await apiCall(`/attendance/date/${date}/${currentSection.id}`, {
+                method: 'DELETE'
+            });
+            
+            showToast('Attendance records deleted successfully!');
+            
+            // Reload history
+            loadHistory();
+            
+            // If the deleted date is the current date, reload attendance
+            if (date === attendanceDateInput.value) {
+                loadAttendanceData();
+            }
+        } catch (error) {
+            showToast('Error deleting records: ' + error.message, 'error');
+        }
+    };
 
     // Initialize
     checkAuth();
