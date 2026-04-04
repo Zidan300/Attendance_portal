@@ -1,6 +1,6 @@
-◇ injecting env (3) from .env // tip: ⌘ suppress logs { quiet: true }
+◇ injecting env (3) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+◇ injecting env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
 ◇ injecting env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
-◇ injecting env (0) from .env // tip: ⌘ override existing { override: true }
 ◇ injecting env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
 Database synchronized.
 Default user already exists: zidan/zidan123

@@ -29,17 +29,17 @@ const Attendance = sequelize.define('Attendance', {
   }
 });
 
-// Relationships
+// Relationships with cascade delete
 User.hasMany(Attendance);
 Attendance.belongsTo(User);
 
-Section.hasMany(Student);
+Section.hasMany(Student, { onDelete: 'CASCADE', hooks: true });
 Student.belongsTo(Section);
 
-Section.hasMany(Attendance);
+Section.hasMany(Attendance, { onDelete: 'CASCADE', hooks: true });
 Attendance.belongsTo(Section);
 
-Student.hasMany(Attendance);
+Student.hasMany(Attendance, { onDelete: 'CASCADE', hooks: true });
 Attendance.belongsTo(Student);
 
 module.exports = { sequelize, User, Section, Student, Attendance };

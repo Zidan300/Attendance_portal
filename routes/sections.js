@@ -88,14 +88,7 @@ router.delete('/:id', authenticate, async (req, res) => {
       return res.status(404).json({ message: 'Section not found' });
     }
 
-    // Check if section has students
-    const studentCount = await Student.count({ where: { SectionId: req.params.id } });
-    if (studentCount > 0) {
-      return res.status(400).json({ 
-        message: `Cannot delete section with ${studentCount} student(s). Please delete students first.` 
-      });
-    }
-
+    // Delete section - students and attendance will cascade automatically
     await section.destroy();
     res.json({ message: 'Section deleted successfully' });
   } catch (err) {
