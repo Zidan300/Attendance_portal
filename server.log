@@ -1,6 +1,8 @@
-◇ injecting env (3) from .env // tip: ⌘ enable debugging { debug: true }
-◇ injecting env (0) from .env // tip: ⌘ suppress logs { quiet: true }
-◇ injecting env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
-◇ injecting env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
-Database initialization error: Validation error
+◇ injecting env (3) from .env // tip: ⌘ suppress logs { quiet: true }
+◇ injecting env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injecting env (0) from .env // tip: ⌘ override existing { override: true }
+◇ injecting env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Database synchronized.
+Default user already exists: zidan/zidan123
+Database ready.
 Server running on port 3000

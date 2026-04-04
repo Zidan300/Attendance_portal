@@ -104,12 +104,17 @@ document.addEventListener('DOMContentLoaded', () => {
             headers
         });
 
-        if (response.status === 401) {
+        // Handle authentication errors
+        if (response.status === 401 || response.status === 403) {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
+            currentSection = null;
+            students = [];
+            attendanceRecords = {};
+            sections = [];
             showPage('login');
-            showToast('Session expired. Please login again.', 'error');
-            return;
+            showToast('Session expired. Please login again.', 'warning');
+            throw new Error('Authentication required');
         }
 
         const data = await response.json();
@@ -139,19 +144,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Authentication ---
 
-    const checkAuth = () => {
+    const checkAuth = async () => {
         const token = localStorage.getItem('token');
-        if (token) {
-            loadSections();
-        } else {
+        
+        if (!token) {
             showPage('login');
+            return;
+        }
+
+        // Validate token by calling verify endpoint
+        try {
+            await apiCall('/auth/verify', { method: 'GET' });
+            // Token is valid, load sections
+            loadSections();
+        } catch (error) {
+            // Token is invalid or expired
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            showPage('login');
+            showToast('Session expired. Please login again.', 'warning');
         }
     };
 
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const username = document.getElementById('username').value;
+        loginError.textContent = '';
+        
+        const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
+        const submitBtn = loginForm.querySelector('button[type="submit"]');
+
+        if (!username || !password) {
+            loginError.textContent = 'Please enter both username and password';
+            showToast('Please enter both username and password', 'error');
+            return;
+        }
+
+        // Disable button and show loading state
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Logging in...';
 
         try {
             const data = await apiCall('/auth/login', {
@@ -161,19 +192,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
-            showToast('Login successful!');
+            
+            // Clear login form
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            
+            showToast('Login successful! Welcome back.');
             loadSections();
         } catch (error) {
-            loginError.textContent = error.message;
-            showToast(error.message, 'error');
+            const errorMsg = error.message || 'Login failed. Please try again.';
+            loginError.textContent = errorMsg;
+            showToast(errorMsg, 'error');
+            
+            // Clear password field on error
+            document.getElementById('password').value = '';
+        } finally {
+            // Re-enable button
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Login';
         }
     });
 
     logoutBtn.addEventListener('click', () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        showToast('Logged out successfully');
-        showPage('login');
+        if (confirm('Are you sure you want to logout?')) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            currentSection = null;
+            students = [];
+            attendanceRecords = {};
+            sections = [];
+            showToast('Logged out successfully');
+            showPage('login');
+        }
     });
 
     // --- Editor Mode Functions ---

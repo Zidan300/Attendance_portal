@@ -24,7 +24,9 @@ app.use('/api/attendance', attendanceRoutes);
 // Database Initialization
 const initializeDB = async () => {
   try {
-    await sequelize.sync({ alter: true }); // Update tables without data loss
+    // Use force: false to create tables only if they don't exist
+    // This avoids the alter table backup issues
+    await sequelize.sync({ force: false });
     console.log('Database synchronized.');
 
     // Seed default user if not exists
@@ -47,6 +49,7 @@ const initializeDB = async () => {
     console.log('Database ready.');
   } catch (error) {
     console.error('Database initialization error:', error.message);
+    // Don't throw - server can still run
   }
 };
 

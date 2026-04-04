@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { User } = require('../models/index');
+const authenticate = require('../middleware/auth');
 require('dotenv').config();
 
 router.post('/login', async (req, res) => {
@@ -28,6 +29,18 @@ router.post('/login', async (req, res) => {
     res.json({ 
       token, 
       user: { id: user.id, username: user.username } 
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Verify token endpoint
+router.get('/verify', authenticate, async (req, res) => {
+  try {
+    res.json({ 
+      valid: true, 
+      user: { id: req.user.id, username: req.user.username } 
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

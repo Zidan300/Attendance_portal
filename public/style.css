@@ -108,8 +108,17 @@ body {
 .error-msg {
     color: #dc3545;
     font-size: 14px;
-    margin-top: 10px;
+    margin-top: 15px;
+    padding: 12px;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 6px;
     text-align: center;
+    display: none;
+}
+
+.error-msg:not(:empty) {
+    display: block;
 }
 
 /* Buttons */
@@ -130,6 +139,16 @@ body {
 .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(255, 102, 0, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .btn-create {
